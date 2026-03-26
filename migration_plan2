@@ -1,0 +1,384 @@
+# 📋 Groq Migration - Quick Reference Guide
+
+## 🎯 Migration Overview
+
+```
+FROM: Local Ollama LLM                  TO: Cloud Groq API
+├─ Slowdown: GPU dependent             ├─ Faster: Cloud optimized
+├─ No cost (CapEx)                      ├─ Usage-based pricing
+├─ Local maintenance required           ├─ Fully managed
+├─ Single GPU bottleneck                ├─ Scales automatically
+└─ Full control                         └─ Less control needed
+
+KEEPING: Upstash Vector (embeddings + storage)
+├─ No changes to vector retrieval
+├─ Same semantic search
+└─ Better than local ChromaDB
+```
+
+---
+
+## 🚀 5-Minute Quickstart
+
+### 1️⃣ Get API Key
+```
+Go to: https://console.groq.com
+→ Sign up/Login → API Keys → Copy key
+```
+
+### 2️⃣ Update .env
+```ini
+GROQ_API_KEY=gsk_your_key_here
+GROQ_MODEL=llama-3.1-8b-instant
+GROQ_TEMPERATURE=0.7
+GROQ_MAX_TOKENS=1024
+```
+
+### 3️⃣ Install & Run
+```bash
+pip install groq
+python groq_rag.py
+```
+
+---
+
+## 📁 Files Created
+
+| File | Purpose | Size |
+|------|---------|------|
+| `groq_rag.py` | Main implementation | ~600 lines |
+| `GROQ_MIGRATION_PLAN.md` | Comprehensive plan | 12 sections |
+| `GROQ_SETUP.md` | Implementation guide | Step-by-step |
+| `test_groq_migration.py` | Validation tests | 300+ lines |
+
+---
+
+## 🔄 Architecture Flow
+
+### Current (Ollama)
+```
+Question
+   ↓
+[Upstash Vector DB] ← Embeddings for question
+   ↓ (retrieves 3 docs)
+[Ollama LLM] ← Local GPU inference
+   ↓
+Answer
+```
+
+### New (Groq)
+```
+Question
+   ↓
+[Upstash Vector DB] ← Embeddings for question
+   ↓ (retrieves 3 docs)
+[Groq Cloud API] ← Cloud inference
+   ↓
+Answer
+```
+
+**Change**: Only LLM component moves to cloud
+
+---
+
+## ⚙️ Key Features Implemented
+
+| Feature | Details |
+|---------|---------|
+| **Retry Logic** | Exponential backoff (1s → 2s → 4s) |
+| **Rate Limiting** | Handles 429 errors gracefully |
+| **Caching** | File-based query cache for resilience |
+| **Monitoring** | Usage tracking with cost estimation |
+| **Error Handling** | Comprehensive try-catch with logging |
+| **Logging** | DEBUG/INFO/WARNING/ERROR levels |
+| **API Compatibility** | OpenAI-compatible format |
+
+---
+
+## 🧪 Testing Commands
+
+```bash
+# Quick test
+python -c "from groq_rag import rag_query; print(rag_query('What is Adobo?'))"
+
+# Full test suite (vs Ollama)
+python test_groq_migration.py
+
+# Check usage stats
+python -c "from groq_rag import usage_tracker; print(usage_tracker.get_stats())"
+
+# Clear cache
+python -c "from groq_rag import query_cache; query_cache.clear()"
+```
+
+---
+
+## 📊 Performance Expectations
+
+| Metric | Ollama (Local) | Groq (Cloud) | Note |
+|--------|---|---|---|
+| Latency | 50-500ms | 600-2300ms | Network adds ~200-300ms |
+| Throughput | GPU limited | Unlimited | Scales horizontally |
+| Cost | Infrastructure CapEx | Usage-based | ~$0.10-0.50/month typical |
+| Availability | Local uptime | 99.9% SLA | Groq promises high availability |
+| Setup | Complex | Simple | Just API key |
+
+---
+
+## 🛠️ Environment Variables
+
+### Required (NEW)
+```
+GROQ_API_KEY=xxx              # Get from console.groq.com
+```
+
+### Optional (NEW, with defaults)
+```
+GROQ_MODEL=llama-3.1-8b-instant    # Default model
+GROQ_TEMPERATURE=0.7               # 0.0-2.0
+GROQ_MAX_TOKENS=1024               # Max response length
+GROQ_TIMEOUT=30                    # Seconds
+GROQ_RETRIES=3                     # Retry attempts
+```
+
+### Existing (No changes needed)
+```
+UPSTASH_VECTOR_REST_URL=xxx
+UPSTASH_VECTOR_REST_TOKEN=xxx
+```
+
+---
+
+## 🔍 Troubleshooting Matrix
+
+| Problem | Solution | Command |
+|---------|----------|---------|
+| `GROQ_API_KEY missing` | Add to .env | `echo "GROQ_API_KEY=..." >> .env` |
+| `Rate limit (429)` | Add delay | `time.sleep(1)` between queries |
+| `Timeout` | Increase timeout | `GROQ_TIMEOUT=60` |
+| `Empty response` | Check model | `GROQ_MODEL=llama-3.1-8b-instant` |
+| `Connection error` | Check internet | `ping api.groq.com` |
+| `Upstash failed` | Verify credentials | Check UPSTASH_VECTOR_* vars |
+
+---
+
+## 💰 Cost Calculator
+
+```
+Assuming 1000 queries/day, avg 700 tokens per query:
+
+Daily:    1,000 queries   × 700 tokens = 700K tokens
+Monthly:  700K × 30 days = 21M tokens
+Cost:     21M × $0.0005/1M = ~$10.50/month
+
+Budget-conscious tips:
+- Use lighter model for simple queries
+- Enable caching (save 50% on repeat queries)
+- Reduce context (top_k=1 vs top_k=3)
+- Batch similar queries
+```
+
+---
+
+## 📝 Code Snippets
+
+### Simple Query
+```python
+from groq_rag import rag_query
+
+answer = rag_query("What is Adobo?")
+print(answer)
+```
+
+### Advanced Query with Options
+```python
+answer = rag_query(
+    question="What is Adobo?",
+    use_cache=True,      # Use cached responses
+    top_k=3              # Get top 3 relevant docs
+)
+```
+
+### Get Usage Stats
+```python
+from groq_rag import usage_tracker
+import json
+
+stats = usage_tracker.get_stats()
+print(f"Cost so far: {stats['estimated_cost_usd']}")
+print(f"Calls made: {stats['total_calls']}")
+print(f"Success rate: {stats['successful_calls']}/{stats['total_calls']}")
+```
+
+### Manual Groq Call (No RAG)
+```python
+from groq_rag import groq_client
+
+response = groq_client.chat.completions.create(
+    model="llama-3.1-8b-instant",
+    messages=[{"role": "user", "content": "Hello!"}]
+)
+print(response.choices[0].message.content)
+```
+
+---
+
+## 🚨 Error Messages Explained
+
+| Error | Cause | Fix |
+|-------|-------|-----|
+| `RuntimeError: Missing GROQ_API_KEY` | .env not loaded | Add key to .env, restart |
+| `RateLimitError: 429` | Too many requests | Add delay between queries |
+| `APIConnectionError` | Network/firewall issue | Check connectivity, firewall |
+| `ValueError: Unexpected response` | API format changed | Update code, check Groq docs |
+| `FileNotFoundError: foods.json` | Data file missing | Verify JSON_FILE path |
+
+---
+
+## ✅ Deployment Checklist
+
+```
+Pre-Deployment:
+☐ GROQ_API_KEY added to .env
+☐ `pip install groq` completed
+☐ test_groq_migration.py passed 8/10 queries
+☐ Response quality acceptable
+☐ Cost estimated and approved
+
+Deployment:
+☐ test_rag_queries.py updated to import groq_rag
+☐ Monitoring enabled (check usage weekly)
+☐ Team notified of change
+☐ Rollback procedure tested
+
+Post-Deployment:
+☐ Monitor for first 100 queries
+☐ Check error rates (should be < 5%)
+☐ Verify response times (should be < 5s)
+☐ Compare quality vs Ollama
+☐ Document any issues
+```
+
+---
+
+## 🔗 Key APIs Used
+
+### Groq LLM Generation
+```python
+client.chat.completions.create(
+    model="llama-3.1-8b-instant",
+    messages=[{"role": "user", "content": "..."}],
+    temperature=0.7,
+    max_tokens=1024
+)
+```
+
+### Upstash Vector Retrieval
+```python
+index.query(
+    data="question text",
+    top_k=3,
+    include_metadata=True
+)
+```
+
+### Usage Tracking
+```python
+usage_tracker.add(
+    input_tokens=100,
+    output_tokens=50,
+    failed=False,
+    cached=False
+)
+```
+
+---
+
+## 📞 Support Hierarchy
+
+1. **Check docs first**: GROQ_MIGRATION_PLAN.md
+2. **Check setup**: GROQ_SETUP.md #Troubleshooting section
+3. **Check logs**: Enable debug logging and review
+4. **Online resources**:
+   - https://console.groq.com/docs
+   - https://github.com/groq/groq-python
+   - https://upstash.com/docs/vector
+
+---
+
+## 🎓 Learning Resources
+
+**Recommended Reading Order**:
+1. This file (overview)
+2. GROQ_MIGRATION_PLAN.md (details)
+3. GROQ_SETUP.md (implementation)
+4. Comment headers in groq_rag.py (code)
+
+**Groq Documentation**:
+- API Reference: https://console.groq.com/docs
+- Rate Limits: https://console.groq.com/docs/rate-limits  
+- Models Available: https://console.groq.com/docs/models
+- Python SDK: https://github.com/groq/groq-python
+
+---
+
+## 📈 Success Metrics
+
+After migration, track these:
+
+| Metric | Target | How to Check |
+|--------|--------|--------------|
+| Success Rate | > 95% | Test runs 100 queries |
+| Avg Response Time | < 3s | Check logs, time queries |
+| Error Rate | < 2% | Monitor groq_rag errors |
+| Cost Tracking | < $50/month | usage_tracker.get_stats() |
+| Quality Score | Similar to Ollama | Manual review of 10 responses |
+| Cache Hit Rate | > 20% | Check query_cache stats |
+
+---
+
+## 🔒 Security Notes
+
+✅ **DO**:
+- Store GROQ_API_KEY in .env
+- Never commit .env to git
+- Rotate keys periodically
+- Monitor API usage
+
+❌ **DON'T**:
+- Log the full API key
+- Pass key as URL parameter
+- Share key via email
+- Hardcode key in source
+
+---
+
+## 🎯 Decision Tree
+
+```
+Want to...?
+
+├─ Setup quickly?
+│  └─ Follow GROQ_SETUP.md (5 minutes)
+│
+├─ Understand architecture?
+│  └─ Read GROQ_MIGRATION_PLAN.md (20 minutes)
+│
+├─ Test before committing?
+│  └─ Run test_groq_migration.py (5 minutes)
+│
+├─ Debug an error?
+│  └─ Check GROQ_SETUP.md Troubleshooting (5 minutes)
+│
+├─ Estimate costs?
+│  └─ Run usage_tracker.get_stats() (1 minute)
+│
+└─ Need detailed help?
+   └─ Review comments in groq_rag.py (30 minutes)
+```
+
+---
+
+**Last Updated**: March 2026  
+**Status**: ✅ Production Ready  
+**Version**: 1.0
