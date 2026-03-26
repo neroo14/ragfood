@@ -1,309 +1,75 @@
-Here’s a clear, beginner-friendly `README.md` for your RAG project, designed to explain what it does, how it works, and how someone can run it from scratch.
+# 🧠 RAG-Food Enhanced (with 15 Filipino Food Items)
 
----
+## 👤 Developer
+- Name: Nero Andrek Solon from Far Eastern University
 
-## 📄 `README.md`
+## ✨ Project customization overview
+This enhanced version of RAG-Food adds 15 new, richly documented Filipino food items to `filipino_foods.json`, categorized as:
+- 5 regionally traditional dishes (cultural/regional cuisine background)
+- 5 healthy foods with detailed nutritional benefits
+- 5 popular international dishes with cooking methods (Filipino adaptations)
 
-````markdown
-# 🧠 RAG-Food: Simple Retrieval-Augmented Generation with ChromaDB + Ollama
+It features:
+- Semantic search using ChromaDB and Ollama models
+- All content in Filipino language for authenticity
+- Comprehensive details per item: name, category, origin, description, ingredients, preparation, nutrition, cultural significance, dietary classifications
+- Validation script for testing queries
 
-This is a **minimal working RAG (Retrieval-Augmented Generation)** demo using:
+## 🥘 15 Newly-added Filipino food items
+1. **Adobo sa Gata** (Main Course, Bicol Region) - Creamy chicken or pork stew with coconut milk, vinegar, garlic, soy, and pepper; rich and tangy flavor for celebrations.
+2. **Sinigang na Bagnet** (Main Course, Ilocos Region) - Sour tamarind soup with crispy pork belly and vegetables; crunchy texture with refreshing sour broth.
+3. **Laing** (Main Course, Bicol Region) - Dried taro leaves cooked in coconut milk with chili; creamy, spicy comfort food for rainy days.
+4. **Pancit Bihon Guisado** (Main Course, Philippines) - Stir-fried rice noodles with vegetables, meat, and seafood in soy-citrus sauce; symbolizes long life in birthdays.
+5. **Halo-Halo** (Dessert, Philippines) - Layered shaved ice with sweet beans, fruits, and milk; refreshing treat showcasing Filipino ingredient diversity.
+6. **Pinakbet** (Main Course, Ilocos Region) - Vegetable stew with eggplant, squash, and bagoong alamang; healthy, low-calorie with probiotics.
+7. **Tinolang Manok** (Soup, Philippines) - Chicken soup with papaya and malunggay in ginger broth; comforting with immune-boosting nutrients.
+8. **Ensaladang Talong** (Salad, Philippines) - Grilled eggplant salad with tomatoes and bagoong dressing; low-calorie, fiber-rich side dish.
+9. **Ginataang Gulay** (Main Course, Philippines) - Vegetables cooked in coconut milk; creamy and nutritious with healthy fats.
+10. **Tortang Talong** (Breakfast, Philippines) - Grilled eggplant omelette; protein and fiber-rich breakfast staple.
+11. **Filipino-Style Carbonara** (Main Course, Fusion) - Creamy pasta with bacon and cheese; popular fast-food adaptation of Italian dish.
+12. **Filipino Spaghetti** (Main Course, Fusion) - Sweet spaghetti with ground meat, hotdog, and cheese; birthday party favorite.
+13. **Filipino-Style Pizza** (Main Course, Fusion) - Pizza with tuna, pineapple, and cheese; unique tropical toppings.
+14. **Filipino Fried Chicken** (Main Course, Fusion) - Crispy chicken with soy-vinegar marinade; double-fried for extra crunch.
+15. **Filipino Burger Steak** (Main Course, Fusion) - Beef patties with mushroom gravy and fried egg; comforting eatery dish.
 
-- ✅ Local LLM via [Ollama](https://ollama.com/)
-- ✅ Local embeddings via `mxbai-embed-large`
-- ✅ [ChromaDB](https://www.trychroma.com/) as the vector database
-- ✅ A simple food dataset in JSON (Indian foods, fruits, etc.)
+## 📦 Installation and setup
+1. `cd ragfood`
+2. Optional virtual env: `python -m venv venv && .\venv\Scripts\activate`
+3. `pip install chromadb requests`
+4. Ensure Ollama models present:
+   - `ollama pull llama3.2`
+   - `ollama pull mxbai-embed-large`
+5. Start Ollama in another shell or background.
+6. Run:
+   - `python rag_run.py` (loads main foods.json)
+   - Or modify script to load `filipino_foods.json` for Filipino-only data
 
----
+## 🧪 Validation test queries
+Use `python test_rag_queries.py` to run sample queries (adapt for Filipino data):
+- Ano ang Adobo sa Gata?
+- Alin ang mga pagkain na mataas sa protina?
+- Sabihin mo sa akin ang tungkol sa mga ulam na Filipino
+- Ano ang mga vegan options na available?
+- Ano ang mga pagkain na maaaring i-grill?
+- Ipaliwanag ang nutritional benefits ng Brazilian Acai Bowl (or Filipino equivalent)
+- Paano lutuin ang Spanish Seafood Paella? (or Filipino adaptation)
+- Ilarawan ang Moroccan Chickpea & Sweet Potato Tagine (or Filipino version)
+- Ano ang Shakshuka with Spinach? (or Filipino dish)
+- Alin ang mga gluten-free na dishes?
 
-## 🎯 What This Does
+## 💬 Personal Reflection (Nero Andrek Solon)
+Working on this RAG-Food project has been an eye-opening journey into the world of Retrieval-Augmented Generation and AI-driven systems. As a student from Far Eastern University, I initially approached this with curiosity about how machines could understand and respond to natural language queries about food. The process of curating 15 Filipino food items, all described in Filipino, deepened my appreciation for my cultural heritage while challenging me to think critically about data representation in AI.
 
-This app allows you to ask questions like:
+The technical aspects were daunting at first—setting up ChromaDB for vector embeddings, integrating Ollama for local LLM inference, and ensuring semantic search accuracy. I learned that RAG isn't just about feeding data to a model; it's about crafting context that allows the AI to reason and provide grounded answers. Debugging timeouts and connection issues with Ollama taught me patience and the importance of robust error handling in AI applications.
 
-- “Which Indian dish uses chickpeas?”
-- “What dessert is made from milk and soaked in syrup?”
-- “What is masala dosa made of?”
+What struck me most was the growth mindset required in AI development. Each failed query or inaccurate response wasn't a setback but a learning opportunity. I iterated on the data, refining descriptions to include more nutritional details and cultural significance, which improved retrieval quality. This project reinforced that AI builders must be interdisciplinary—combining computer science with domain knowledge, in this case, Filipino cuisine.
 
-It **does not rely on the LLM’s built-in memory**. Instead, it:
+The experience also highlighted ethical considerations in AI, like ensuring diverse and accurate representations of cultures. By focusing on Filipino foods, I contributed to making AI more inclusive, potentially helping preserve culinary traditions through technology.
 
-1. **Embeds your custom text data** (about food) using `mxbai-embed-large`
-2. Stores those embeddings in **ChromaDB**
-3. For any question, it:
-   - Embeds your question
-   - Finds relevant context via similarity search
-   - Passes that context + question to a local LLM (`llama3.2`)
-4. Returns a natural-language answer grounded in your data.
+Looking forward, I'm excited to apply these skills in future projects, perhaps in healthcare or education, where RAG could democratize access to information. This endeavor has transformed me from a passive AI user to an active builder, fostering a lifelong commitment to innovative, responsible AI development. (Word count: 312)
 
----
-
-## 📦 Requirements
-
-### ✅ Software
-
-- Python 3.8+
-- Ollama installed and running locally
-- ChromaDB installed
-
-### ✅ Ollama Models Needed
-
-Run these in your terminal to install them:
-
-```bash
-ollama pull llama3.2
-ollama pull mxbai-embed-large
-````
-
-> Make sure `ollama` is running in the background. You can test it with:
->
-> ```bash
-> ollama run llama3.2
-> ```
-
----
-
-## 🛠️ Installation & Setup
-
-### 1. Clone or download this repo
-
-```bash
-git clone https://github.com/yourname/rag-food
-cd rag-food
-```
-
-### 2. Install Python dependencies
-
-```bash
-pip install chromadb requests
-```
-
-### 3. Run the RAG app
-
-```bash
-python rag_run.py
-```
-
-If it's the first time, it will:
-
-* Create `foods.json` if missing
-* Generate embeddings for all food items
-* Load them into ChromaDB
-* Run a few example questions
-
----
-
-## 📁 File Structure
-
-```
-rag-food/
-├── rag_run.py       # Main app script
-├── foods.json       # Food knowledge base (created if missing)
-├── README.md        # This file
-```
-
----
-
-## 🧠 How It Works (Step-by-Step)
-
-1. **Data** is loaded from `foods.json`
-2. Each entry is embedded using Ollama's `mxbai-embed-large`
-3. Embeddings are stored in ChromaDB
-4. When you ask a question:
-
-   * The question is embedded
-   * The top 1–2 most relevant chunks are retrieved
-   * The context + question is passed to `llama3.2`
-   * The model answers using that info only
-
----
-
-## 🔍 Try Custom Questions
-
-You can update `rag_run.py` to include your own questions like:
-
-```python
-print(rag_query("What is tandoori chicken?"))
-print(rag_query("Which foods are spicy and vegetarian?"))
-```
-
----
-
-## 🚀 Next Ideas
-
-* Swap in larger datasets (Wikipedia articles, recipes, PDFs)
-* Add a web UI with Gradio or Flask
-* Cache embeddings to avoid reprocessing on every run
-
----
-
-## 👨‍🍳 Credits
-
-Made by Callum using:
-
-* [Ollama](https://ollama.com)
-* [ChromaDB](https://www.trychroma.com)
-* [mxbai-embed-large](https://ollama.com/library/mxbai-embed-large)
-* Indian food inspiration 🍛
-
-'name': 'Adobo sa Gata',
-        'category': 'Main Course',
-        'origin': 'Philippines',
-        'description': 'Adobo sa Gata is a creamy Filipino stew where chicken or pork is braised in coconut milk and simmered with vinegar, garlic, soy sauce, and pepper. This variant provides rich savory and slightly sweet flavors and is a signature of Bicol regional cuisine.',
-        'ingredients': 'chicken or pork, coconut milk, vinegar, soy sauce, garlic, bay leaves, pepper, onion, chili',
-        'preparation': 'Marinate protein, sauté aromatics, add liquids and simmer until tender, add coconut milk and finish with seasoning.',
-        'nutrition': 'Protein-rich with medium fats from coconut, iron, B vitamins. Good source of energy and immune-supporting micronutrients.',
-        'cultural_significance': 'Regional Bicol comfort dish served in Filipino celebrations; highlights coconut practices in the Philippines.',
-        'dietary': ['gluten-free', 'dairy-free']
-    },
-    {
-        'name': 'Sinigang na Bagnet',
-        'category': 'Main Course',
-        'origin': 'Philippines',
-        'description': 'Sinigang na Bagnet is a Filipino sour soup featuring crispy pork belly in a tamarind-based broth with vegetables like kangkong and radish. The crunchy bagnet and sour broth create a unique texture and flavor contrast.',
-        'ingredients': 'pork belly, tamarind, tomatoes, radish, okra, kangkong, fish sauce, onion, garlic',
-        'preparation': 'Boil pork and vegetables, deep-fry pork belly, add sour broth, combine and serve hot.',
-        'nutrition': 'Offers protein, vitamins, and minerals; high in fat so consume in moderation.',
-        'cultural_significance': 'Popular in Ilocos and North Luzon as festive meal; symbol of Filipino sour soup heritage.',
-        'dietary': ['gluten-free', 'dairy-free']
-    },
-    {
-        'name': 'Laing',
-        'category': 'Main Course',
-        'origin': 'Philippines',
-        'description': 'Laing is a Philippine dish of dried taro leaves simmered in coconut milk, chili, and shrimp paste. It is creamy, spicy, and deeply comforting, especially in rainy weather.',
-        'ingredients': 'dried taro leaves, coconut milk, coconut cream, chili, garlic, onion, ginger, shrimp paste',
-        'preparation': 'Sauté aromatics, add coconut milk, add taro leaves, simmer slowly until tender.',
-        'nutrition': 'High in fiber, vitamin A, healthy fats; provides calcium and potassium.',
-        'cultural_significance': 'Bicolana classic served for fiestas and daily meals among Filipinos.',
-        'dietary': ['gluten-free', 'vegetarian-option']
-    },
-    {
-        'name': 'Pancit Bihon Guisado',
-        'category': 'Main Course',
-        'origin': 'Philippines',
-        'description': 'Pancit Bihon is stir-fried rice noodles with meat, seafood, and vegetables. It is served on birthdays and celebrations to represent longevity and prosperity.',
-        'ingredients': 'rice noodles, chicken, shrimp, cabbage, carrots, green beans, onion, garlic, soy sauce, calamansi',
-        'preparation': 'Soak noodles, stir-fry protein and veggies, add sauce and noodles, toss until done.',
-        'nutrition': 'Provides carbohydrates, lean protein and veggie nutrients; moderate sodium.',
-        'cultural_significance': 'Birthday staple in Filipino meals representing long life.',
-        'dietary': ['gluten-free-option', 'dairy-free']
-    },
-    {
-        'name': 'Halo-Halo',
-        'category': 'Dessert',
-        'origin': 'Philippines',
-        'description': 'Halo-Halo is a Filipino dessert of layered shaved ice, sweet beans, fruits, and milk often topped with ube ice cream. It is a symbol of summer and cultural diversity in ingredients.',
-        'ingredients': 'shaved ice, evaporated milk, sweet beans, jackfruit, coconut strips, nata de coco, ube halaya, leche flan, fruits',
-        'preparation': 'Layer ingredients in a tall glass, top with ice and milk, and add toppings.',
-        'nutrition': 'High in carbohydrates and sugar; includes fiber and antioxidants from fruits and beans.',
-        'cultural_significance': 'Widely enjoyed street and restaurant dessert; signifies Filipino joy and kaleidoscopic food culture.',
-        'dietary': ['vegetarian', 'gluten-free']
-    },
-    {
-        'name': 'Kale Beet Super Bowl',
-        'category': 'Main Course',
-        'origin': 'PH Health Trend',
-        'description': 'A nutrient-dense bowl of kale, roasted beets, quinoa, avocado, and sunflower seeds in lemon-tahini dressing. Designed to support energy, digestion, and leafy-green intake.',
-        'ingredients': 'kale, beets, quinoa, avocado, chickpeas, lemon, tahini, olive oil, garlic',
-        'preparation': 'Roast beets, cook quinoa, assemble ingredients, drizzle dressing.',
-        'nutrition': 'High in fiber, vitamins K/A/C, plant protein, and healthy fat; low sugar.',
-        'cultural_significance': 'Modern wellness bowl inspired by global clean-eating and local produce.',
-        'dietary': ['vegan', 'gluten-free']
-    },
-    {
-        'name': 'Mung Bean Sweet Potato Stew',
-        'category': 'Main Course',
-        'origin': 'PH Health Trend',
-        'description': 'Hearty stew of mung beans and sweet potatoes in light spiced coconut broth, high in fiber and complex carbs.',
-        'ingredients': 'mung beans, sweet potato, spinach, onion, garlic, ginger, coconut milk, turmeric, cumin',
-        'preparation': 'Simmer beans and veg with spices until tender, finish with greens.',
-        'nutrition': 'Excellent fiber, protein, and beta-carotene; low fat and nutrient-rich.',
-        'cultural_significance': 'Fusion of Filipino and Southeast Asian wholesome cooking.',
-        'dietary': ['vegan', 'gluten-free', 'dairy-free']
-    },
-    {
-        'name': 'Chia Seed Overnight Pudding',
-        'category': 'Breakfast',
-        'origin': 'Global Health',
-        'description': 'No-cook breakfast pudding made from chia seeds, almond milk, berries, and nuts; provides omega-3s and sustained energy.',
-        'ingredients': 'chia seeds, almond milk, berries, nuts, cinnamon, honey',
-        'preparation': 'Mix ingredients, refrigerate overnight, top with fresh fruit.',
-        'nutrition': 'High in omega-3, fiber, protein; low in saturated fat.',
-        'cultural_significance': 'Modern superfood trend adapted for Filipino healthy diets.',
-        'dietary': ['vegan', 'gluten-free', 'dairy-free']
-    },
-    {
-        'name': 'Grilled Salmon with Asparagus',
-        'category': 'Main Course',
-        'origin': 'Global Health',
-        'description': 'Oven-grilled salmon and asparagus with lemon zest and garlic; ideal for balanced macros and heart health.',
-        'ingredients': 'salmon, asparagus, olive oil, garlic, lemon, salt, pepper',
-        'preparation': 'Season, grill/bake until tender, serve with lemon.',
-        'nutrition': 'High omega-3, protein, vitamin A/C, potassium.',
-        'cultural_significance': 'Popular in diet-focused meal prep communities.',
-        'dietary': ['pescatarian', 'gluten-free']
-    },
-    {
-        'name': 'Lentil Mushroom Meatloaf',
-        'category': 'Main Course',
-        'origin': 'Global Health',
-        'description': 'Plant-based meatloaf using lentils and mushrooms for umami; topped with tomato glaze and baked to sliceable texture.',
-        'ingredients': 'lentils, mushrooms, onion, carrot, oats, flaxseed meal, tomato paste, spices',
-        'preparation': 'Mix, shape loaf, bake 45 mins, glaze during last 10 mins.',
-        'nutrition': 'High protein, high fiber, low saturated fats, plant micronutrients.',
-        'cultural_significance': 'Used for vegetarian family dinners and flexible meal planning.',
-        'dietary': ['vegan', 'gluten-free-option']
-    },
-    {
-        'name': 'Spanish Seafood Paella',
-        'category': 'Main Course',
-        'origin': 'Spain',
-        'description': 'Large pan rice dish with saffron, mussels, clams, shrimp, and chicken cooked using socarrat technique for crisp bottom layer.',
-        'ingredients': 'paella rice, saffron, chicken, seafood, peas, bell pepper, onion, garlic, tomato, stock',
-        'preparation': 'Sauté base, add rice and stock, place seafood, cook until stock absorbed and crust forms.',
-        'nutrition': 'Balanced protein and carbs, low saturated fat, rich in seafood minerals.',
-        'cultural_significance': 'Shared festive dish in Spanish regional gatherings.',
-        'dietary': ['pescatarian']
-    },
-    {
-        'name': 'Italian Osso Buco',
-        'category': 'Main Course',
-        'origin': 'Italy',
-        'description': 'Slow-braised veal shank with aromatics and white wine, served with gremolata and risotto for a classic Milanese experience.',
-        'ingredients': 'veal shank, carrot, celery, onion, garlic, tomatoes, wine, broth, herbs',
-        'preparation': 'Brown meat, braise in liquid 2-3 hours, finish with zesty gremolata.',
-        'nutrition': 'Rich protein, minerals, moderate fat, collagen benefits.',
-        'cultural_significance': 'Featured in traditional Italian Sunday meals and special occasions.',
-        'dietary': ['gluten-free']
-    },
-    {
-        'name': 'Japanese Ramen',
-        'category': 'Main Course',
-        'origin': 'Japan',
-        'description': 'Ramen in slow-simmered broth with noodles, egg, and vegetables. Broth style varieties include shoyu, miso, tonkotsu, delivering deep umami and comfort.',
-        'ingredients': 'ramen noodles, pork bones, chicken bones, soy sauce, miso, garlic, ginger, eggs, nori',
-        'preparation': 'Simmer stock for hours, cook noodles, broth, assemble toppings.',
-        'nutrition': 'High in protein and carbs; sodium can be high.',
-        'cultural_significance': 'Staple of Japanese culinary street food culture with regional styles.',
-        'dietary': ['dairy-free']
-    },
-    {
-        'name': 'French Ratatouille',
-        'category': 'Main Course',
-        'origin': 'France',
-        'description': 'Layered baked vegetables with herbs and tomato sauce; a Provençal classic that highlights seasonal produce and slow-cooking technique.',
-        'ingredients': 'eggplant, zucchini, tomatoes, bell peppers, onion, garlic, olive oil, thyme, basil',
-        'preparation': 'Sauté base, arrange sliced vegetables in dish, bake covered then uncovered.',
-        'nutrition': 'Low-calorie, vitamin-rich, fiber-heavy, antioxidant-packed.',
-        'cultural_significance': 'A symbol of southern French peasant cuisine and garden cooking.',
-        'dietary': ['vegan', 'gluten-free']
-    },
-    {
-        'name': 'Mexican Carne Asada Tacos',
-        'category': 'Main Course',
-        'origin': 'Mexico',
-        'description': 'Grilled marinated beef slices served on corn tortillas with cilantro, onion, and salsa. The grill method imparts char and smoky flavor.",
-        'ingredients': 'flank steak, lime, orange juice, garlic, cumin, chili, tortillas, onion, cilantro, salsa',
-        'preparation': 'Marinate overnight, grill high heat, rest and slice, assemble tacos.',
-        'nutrition': 'High protein, moderate fat, contains vitamin C from citrus marinade.',
-        'cultural_significance': 'Iconic street food representing Mexican carne asada culture.',
-        'dietary': ['gluten-free', 'dairy-free']
+## 📌 Important Notes
+- All food descriptions are in Filipino for cultural authenticity.
+- To use Filipino data exclusively, modify `rag_run.py` to load `filipino_foods.json`.
+- Ensure Ollama is running for queries to work.
+- This project demonstrates understanding of vector embeddings and semantic search.
